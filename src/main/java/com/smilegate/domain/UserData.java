@@ -7,6 +7,10 @@ public class UserData {
 	private String name;
 	private String email;
 	
+	public UserData() {
+		
+	}
+
 	public UserData(String userId, String password, String name, String email) {
 		this.userId = userId;
 		this.password = password;
@@ -14,6 +18,9 @@ public class UserData {
 		this.email = email;
 	}
 
+	public UserData getUserData() {
+		return this;
+	}
 	
 	public String getUserId() {
 		return userId;
