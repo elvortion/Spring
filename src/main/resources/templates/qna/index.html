@@ -12,16 +12,16 @@
               		<div calss="wrap">
               			<div class="main">
               				<strong class="subject">
-              					<a href="./qna/show.html">{{title}}</a>
+              					<a href="/qna/{{id}}/show.html">{{title}}</a>
               				</strong>
               				<div class="auth-info">
               					<i class="icon-add-comment"></i>
               					<span class="time">{{time}}</span>
-              					<a href="./user/profile.html" class="author">{{writer}}</a>
+              					<a href="./user/profile.html" class="author">{{writer.userId}}</a>
               				</div>
               				<div class="reply" title="댓글">
               					<i class="icon-reply"></i>
-              					<span class="point">0</span>
+              					<span class="point">{{-index}}</span>
               				</div>
               			</div>
               		</div>
@@ -42,7 +42,9 @@
                 </ul>
               </div>
               <div class="col-md-3 qna-write">
-                  <a href="./qna/form.html" class="btn btn-primary pull-right" role="button">질문하기</a>
+              {{#loginUser}}
+                  <a href="/qna/form" class="btn btn-primary pull-right" role="button">질문하기</a>
+              {{/loginUser}}
               </div>
           </div>
         </div>

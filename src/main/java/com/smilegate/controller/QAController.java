@@ -1,32 +1,108 @@
 package com.smilegate.controller;
 
-import java.util.ArrayList;
+import javax.servlet.http.HttpSession;
+
+//import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
 import com.smilegate.domain.Question;
+import com.smilegate.domain.QuestionRepository;
+import com.smilegate.domain.UserData;
+import com.smilegate.utils.HttpSessionUtils;
 
 @Controller
-//@RequestMapping("/qna")
+@RequestMapping("/qna")
 public class QAController {
 	
 	private static final Logger log = LoggerFactory.getLogger(UserController.class);
-	public ArrayList<Question> list = new ArrayList<Question>();
+//	public ArrayList<Question> list = new ArrayList<Question>();
 	
-	@PostMapping("/qna/questions")
-	public String ask(Question question) {
-		list.add(question);
-		log.debug("현재 질문의 개수 : " + list.size());
-		return "redirect:/index";
+	@Autowired
+	private QuestionRepository questionRepository;
+	
+	@GetMapping("/form")
+	public String viewQuestionForm(HttpSession session) {
+		log.debug("/form [GET]");
+		
+		UserData loginUser = HttpSessionUtils.getUserFromSession(session);
+		log.debug(loginUser.toString());
+		
+		//model.addAttribute("user", questionRepository.findOne(id));
+		
+		return "/qna/form";
 	}
 	
-	@GetMapping("/index")
-	public String view(Model model) {
-		model.addAttribute("list", list);
+	@PostMapping("/questions")
+	public String ask(Question newQuestion, HttpSession session) {
+		UserData currentUser = HttpSessionUtils.getUserFromSession(session);
+		newQuestion.setWriter(currentUser);
+		log.debug(newQuestion.toString());
+		log.debug("currentUser : " + currentUser);
+		questionRepository.save(newQuestion);
+
+		return "redirect:/qna/list";
+	}
+	
+	@GetMapping("/list")
+	public String viewQuestionList(Model model) {
+		model.addAttribute("list", questionRepository.findAll());
+	
 		return "/qna/index";
+	}
+	
+	@GetMapping("/{id}/show")
+	public String viewQuestionDetail(@PathVariable long id, Model model) {
+		Question question = questionRepository.findOne(id);
+		model.addAttribute("Question", question);
+		
+		return "/qna/show";
+	}
+	
+	@GetMapping("/{id}/edit")
+	public String viewUpdateForm(@PathVariable long id, Model model, HttpSession session) {
+		Question question = questionRepository.findOne(id);
+		UserData user = HttpSessionUtils.getUserFromSession(session);
+		if (!question.isMatchWriter(user)) {
+			log.debug("작성자 이외에는 질문을 수정 할 수 없습니다.");
+			return "redirect:/qna/" + Long.toString(id) + "/show"; 
+		}
+		model.addAttribute("Question", question);
+		return "/qna/updateForm";
+	}
+	
+//	@RequestMapping(method = RequestMethod.PUT)
+	@PutMapping("{id}/edit")
+//	@PostMapping("/{id}/edit")
+	public String updateQuestion(@PathVariable long id, Question newQuestion) {
+		Question question = questionRepository.findOne(id);
+		question.update(newQuestion);
+		questionRepository.save(question);
+		log.debug("return URL : " + "/qna/" + Long.toString(id) + "/show");
+		return "/qna/" + Long.toString(id) + "/show";
+	}
+	
+	@DeleteMapping("/{id}")
+	public String removeQuestion(@PathVariable long id, HttpSession session) {
+		UserData user = HttpSessionUtils.getUserFromSession(session);
+		if (user.getId() != id) {	// 로그인한 유저가 생성한 질문만 삭제 가능
+			log.debug("작성자 이외에는 질문을 삭제 할 수 없습니다.");
+			return "redirect:/qna/list";
+		}
+		Question question = questionRepository.findOne(id);
+		questionRepository.delete(question);
+		
+		return "redirect:/qna/list";
 	}
 }

@@ -1,41 +1,103 @@
 package com.smilegate.domain;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class Question {
-	private String writer;
+	@Id @GeneratedValue
+	private long id;
+	
+	//@Column
+	@ManyToOne
+	UserData writer;
+	
+//	@Column(length = 15, nullable = false)
+//	private String writer;
+	
+	@Column(length = 50, nullable = false)
 	private String title;
+	
+	@Column(length = 500, nullable = false)
 	private String contents;
+	
+	@Column(length = 100, nullable = false)
 	private Date time;
 	//private String time;
 	//private SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd hh:mm");
 	
+	
+
 	public Question() {
 		this.time = new Date();
 	}
 	
-//	public Question(String writer, String title, String contents) {
-//		this.writer = writer;
-//		this.title = title;
-//		this.contents = contents;
-////		this.lTime = System.currentTimeMillis();
-////		this.time = format.format(lTime).toString();
-//	}
+	public Question(UserData user, Question question) {
+		this.time = new Date();
+		this.writer = question.writer;
+		this.title = question.title;
+		this.contents = question.contents;
+	}
+	
+	public Question(Question question) {
+		this.time = new Date();
+		this.writer = question.writer;
+		this.title = question.title;
+		this.contents = question.contents;
+	}
+	
+	public String toString() {
+		return "Writer : " + this.writer.toString() + "\n" + "Time : " + this.time.toString() + " | Title : " + this.title;
+	}
+	
+	public boolean isMatchWriter(UserData user) {
+		return this.writer.getId() == user.getId();
+	}
+	
+	public boolean isMatchId(long id) {
+		return this.writer.getId() == id;
+	}
 
+	public void update(Question newQuestion) {
+		if (isMatchId(newQuestion.writer.getId())) {
+			this.title = newQuestion.title;
+			this.contents = newQuestion.contents;
+		}	
+	}
+	
+	public long getId() {
+		return id;
+	}
 
-	public String getWriter() {
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public UserData getWriter() {
 		return writer;
 	}
 
-	public void setWriter(String author) {
-		this.writer = author;
+	public void setWriter(UserData writer) {
+		this.writer = writer;
+	}
+
+	public Date getTime() {
+		return time;
+	}
+
+	public void setTime(Date time) {
+		this.time = time;
 	}
 
 	public String getTitle() {
 		return title;
 	}
-
+	
 	public void setTitle(String title) {
 		this.title = title;
 	}
