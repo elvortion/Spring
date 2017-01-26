@@ -31,6 +31,7 @@ public class UserController {
 
 	@GetMapping("/form") // 회원가입 form.html 가져오기
 	public String viewJoinForm() {
+		log.debug("/users/form [GET]");
 		return "/users/form";
 	}
 
@@ -38,36 +39,39 @@ public class UserController {
 	public String userJoin(UserData newUserData) { // 자동으로 Mapping
 		userRepository.save(newUserData);
 		// list.add(newUserData);
-		log.debug("UserData ++ ");
-
+		log.debug("/users/create [POST]");
+		
 		return "redirect:/users/index";
 	}
 
-	@GetMapping("/") // 회원목록 list.html 가져오기
-	public String viewUserListPage(Model model) {
+	@GetMapping("/list") // 회원목록 list.html 가져오기
+	public String index(Model model) {
 		model.addAttribute("list", userRepository.findAll());
 		// model.addAttribute("list", list);
-
+		log.debug("/users [GET]");
+		
 		return "users/index";
 	}
 
 	@GetMapping("/login") // 로그인 login.html 가져오기
 	public String viewUserLoginPage() {
-		log.debug("users/login.html 로드 완료");
+		log.debug("/users/login [GET]");
+		
 		return "/users/login";
 	}
 
 	@GetMapping("/profile")
 	public String show(String userId, Model model) {
-		log.debug("users/profile [GET]");
+		log.debug("/users/profile [GET]");
 		UserData currentUser = userRepository.findByUserId(userId);
-		model.addAttribute("UserData", currentUser);		
+		model.addAttribute("UserData", currentUser);
+		
 		return "/users/profile";
 	}
 
-	@PostMapping("/checklogin") // 로그인 진행
+	@PostMapping("/enter") // 로그인 진행
 	public String login(String userId, String password, HttpSession session) {
-		log.debug("/checklogin [POST]");
+		log.debug("/users/checklogin [POST]");
 		UserData currentUser = userRepository.findByUserId(userId);
 		if (currentUser == null) { // 예외처리, 유저가 존재하지 않는 경우
 			log.debug("유저가 존재하지 않습니다!");
@@ -82,21 +86,21 @@ public class UserController {
 			// 한번 세션을 담아놓으면 HTML 어디에서나 그대로 사용 할 수 있음
 			session.setAttribute("loginUser", currentUser); // Key Value
 
-			log.debug("현재 로그인 된 유저의 정보 : " + currentUser.getUserData().toString());
-			return "redirect:/users/";
+			log.debug("로그인 유저 = " + currentUser.getUserData().toString());
+			return "redirect:/qna/list";
 		}
 	}
 
 	@GetMapping("/logout") // 로그아웃 진행
 	public String logout(HttpSession session) {
-		log.debug("/logout [GET]");
+		log.debug("/users/logout [GET]");
 		session.removeAttribute("loginUser");
 		return "/";
 	}
 
 	@GetMapping("{id}/form") // 개인정보 수정 form.html 가져오기
 	public String viewUserUpdateForm(@PathVariable long id, Model model, HttpSession session) {
-		log.debug("users/{id}/form [GET] 유저 생성 폼 로드");
+		log.debug("/users/{id}/form [GET] 유저 생성 폼 로드");
 		checkOwner(id, session);
 
 		model.addAttribute("user", userRepository.findOne(id));

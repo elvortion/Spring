@@ -1,0 +1,8 @@
+insert into user_data (user_id, password, name, email) values ('jsb9412', '9412', '정이프', 'sbjung@smilegate.com')
+insert into user_data (user_id, password, name, email) values ('aaaa', 'aaaa', '사용자', 'aaa@aaa.com')
+insert into user_data (user_id, password, name, email) values ('test', 'test', '테스트', 'test@test.com')
+insert into user_data (user_id, password, name, email) values ('abcd', 'a', '간단함', 'very@simple.com')
+
+insert into question (id, writer_id, title, contents, time) values (1, 1, '질문합니다', 'Spring이란?', CURRENT_TIMESTAMP())
+insert into question (id, writer_id, title, contents, time) values (2, 2, '저도 궁금', 'ORM이 뭔가요?', CURRENT_TIMESTAMP())
+insert into question (id, writer_id, title, contents, time) values (3, 3, '질문있는데요', '여기 뭐하는 곳임', CURRENT_TIMESTAMP())

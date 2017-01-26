@@ -34,7 +34,7 @@ public class QAController {
 	
 	@GetMapping("/form")
 	public String viewQuestionForm(HttpSession session) {
-		log.debug("/form [GET]");
+		log.debug("qna/form [GET]");
 		
 		UserData loginUser = HttpSessionUtils.getUserFromSession(session);
 		log.debug(loginUser.toString());
@@ -83,14 +83,15 @@ public class QAController {
 	}
 	
 //	@RequestMapping(method = RequestMethod.PUT)
-	@PutMapping("{id}/edit")
+	@PutMapping("/{id}/edit")
 //	@PostMapping("/{id}/edit")
 	public String updateQuestion(@PathVariable long id, Question newQuestion) {
 		Question question = questionRepository.findOne(id);
 		question.update(newQuestion);
 		questionRepository.save(question);
 		log.debug("return URL : " + "/qna/" + Long.toString(id) + "/show");
-		return "/qna/" + Long.toString(id) + "/show";
+//		return "/qna/" + Long.toString(id) + "/show";
+		return "/qna/index";
 	}
 	
 	@DeleteMapping("/{id}")
