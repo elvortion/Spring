@@ -1,7 +1,5 @@
 package com.smilegate.controller;
 
-//import java.util.ArrayList;
-
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -15,40 +13,39 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.smilegate.domain.UserData;
+import com.smilegate.domain.User;
 import com.smilegate.domain.UserRepository;
 import com.smilegate.utils.HttpSessionUtils;
 
 @Controller
 @RequestMapping("/users")
 public class UserController {
-
-	// public ArrayList<UserData> list = new ArrayList<UserData>();
 	private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
 	@Autowired
 	private UserRepository userRepository;
 
-	@GetMapping("/form") // 회원가입 form.html 가져오기
+	@GetMapping("/form/create")
 	public String viewJoinForm() {
-		log.debug("/users/form [GET]");
-		return "/users/form";
+		log.debug("/users/form/create [GET]");
+		return "/users/create";
 	}
 
-	@PostMapping("/create") // 회원가입 진행
-	public String userJoin(UserData newUserData) { // 자동으로 Mapping
-		userRepository.save(newUserData);
-		// list.add(newUserData);
-		log.debug("/users/create [POST]");
+	@PostMapping("/create")
+	public String userJoin(User newUser) {
+		log.debug("/users/form/create [POST]");
 		
-		return "redirect:/users/index";
+		//TODO 입력 값에 대한 어떠한 확인 로직이 없음
+		userRepository.save(newUser);
+		
+		return "redirect:/";
 	}
 
-	@GetMapping("/list") // 회원목록 list.html 가져오기
+	@GetMapping("/list")
 	public String index(Model model) {
-		model.addAttribute("list", userRepository.findAll());
-		// model.addAttribute("list", list);
-		log.debug("/users [GET]");
+		log.debug("/users/list [GET]");
+		
+		model.addAttribute("userList", userRepository.findAll());
 		
 		return "users/index";
 	}
@@ -57,13 +54,14 @@ public class UserController {
 	public String viewUserLoginPage() {
 		log.debug("/users/login [GET]");
 		
+		//TODO login error에 대한 어떠한 로직도 없음
 		return "/users/login";
 	}
 
 	@GetMapping("/profile")
 	public String show(String userId, Model model) {
 		log.debug("/users/profile [GET]");
-		UserData currentUser = userRepository.findByUserId(userId);
+		User currentUser = userRepository.findByUserId(userId);
 		model.addAttribute("UserData", currentUser);
 		
 		return "/users/profile";
@@ -72,7 +70,7 @@ public class UserController {
 	@PostMapping("/enter") // 로그인 진행
 	public String login(String userId, String password, HttpSession session) {
 		log.debug("/users/checklogin [POST]");
-		UserData currentUser = userRepository.findByUserId(userId);
+		User currentUser = userRepository.findByUserId(userId);
 		if (currentUser == null) { // 예외처리, 유저가 존재하지 않는 경우
 			log.debug("유저가 존재하지 않습니다!");
 			return "redirect:/users/login.html";
@@ -112,7 +110,7 @@ public class UserController {
 		if (!HttpSessionUtils.isLoginUser(session)) {
 			throw new IllegalStateException("로그인하지 않은 사용자입니다.");
 		}
-		UserData loginUser = HttpSessionUtils.getUserFromSession(session);
+		User loginUser = HttpSessionUtils.getUserFromSession(session);
 		if (!loginUser.isMatchId(id)) {
 			throw new IllegalStateException("허용되지 않은 유저입니다.");
 		}
@@ -120,13 +118,13 @@ public class UserController {
 
 	// @PostMapping("{id}/update")
 	@PutMapping("{id}/update") // 개인정보 수정 진행
-	public String userUpdate(@PathVariable long id, UserData user, HttpSession session) {
+	public String userUpdate(@PathVariable long id, User user, HttpSession session) {
 		log.debug("/users/{id}/update [PUT]");
 
 		checkOwner(id, session);
 
 		log.debug("변경 전 = " + user.toString());
-		UserData dbUser = userRepository.findOne(id);
+		User dbUser = userRepository.findOne(id);
 		dbUser.update(user);
 		log.debug("변경 후 = " + dbUser.toString());
 		userRepository.save(dbUser);

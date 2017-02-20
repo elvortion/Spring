@@ -15,7 +15,7 @@ public class Question {
 	
 	//@Column
 	@ManyToOne
-	UserData writer;
+	User writer;
 	
 //	@Column(length = 15, nullable = false)
 //	private String writer;
@@ -37,7 +37,7 @@ public class Question {
 		this.time = new Date();
 	}
 	
-	public Question(UserData user, Question question) {
+	public Question(User user, Question question) {
 		this.time = new Date();
 		this.writer = question.writer;
 		this.title = question.title;
@@ -55,7 +55,7 @@ public class Question {
 		return "Writer : " + this.writer.toString() + "\n" + "Time : " + this.time.toString() + " | Title : " + this.title;
 	}
 	
-	public boolean isMatchWriter(UserData user) {
+	public boolean isMatchWriter(User user) {
 		return this.writer.getId() == user.getId();
 	}
 	
@@ -78,11 +78,11 @@ public class Question {
 		this.id = id;
 	}
 
-	public UserData getWriter() {
+	public User getWriter() {
 		return writer;
 	}
 
-	public void setWriter(UserData writer) {
+	public void setWriter(User writer) {
 		this.writer = writer;
 	}
 

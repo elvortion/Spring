@@ -11,6 +11,7 @@ public class MainController {
 
 	private static final Logger log = LoggerFactory.getLogger(UserController.class);
 	
+	
 	@GetMapping("/")
 	public String main() {
 		log.debug("/ [GET]");

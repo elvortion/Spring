@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.smilegate.domain.Question;
 import com.smilegate.domain.QuestionRepository;
-import com.smilegate.domain.UserData;
+import com.smilegate.domain.User;
 import com.smilegate.utils.HttpSessionUtils;
 
 @Controller
@@ -36,7 +36,7 @@ public class QAController {
 	public String viewQuestionForm(HttpSession session) {
 		log.debug("qna/form [GET]");
 		
-		UserData loginUser = HttpSessionUtils.getUserFromSession(session);
+		User loginUser = HttpSessionUtils.getUserFromSession(session);
 		log.debug(loginUser.toString());
 		
 		//model.addAttribute("user", questionRepository.findOne(id));
@@ -46,7 +46,7 @@ public class QAController {
 	
 	@PostMapping("/questions")
 	public String ask(Question newQuestion, HttpSession session) {
-		UserData currentUser = HttpSessionUtils.getUserFromSession(session);
+		User currentUser = HttpSessionUtils.getUserFromSession(session);
 		newQuestion.setWriter(currentUser);
 		log.debug(newQuestion.toString());
 		log.debug("currentUser : " + currentUser);
@@ -73,7 +73,7 @@ public class QAController {
 	@GetMapping("/{id}/edit")
 	public String viewUpdateForm(@PathVariable long id, Model model, HttpSession session) {
 		Question question = questionRepository.findOne(id);
-		UserData user = HttpSessionUtils.getUserFromSession(session);
+		User user = HttpSessionUtils.getUserFromSession(session);
 		if (!question.isMatchWriter(user)) {
 			log.debug("작성자 이외에는 질문을 수정 할 수 없습니다.");
 			return "redirect:/qna/" + Long.toString(id) + "/show"; 
@@ -96,7 +96,7 @@ public class QAController {
 	
 	@DeleteMapping("/{id}")
 	public String removeQuestion(@PathVariable long id, HttpSession session) {
-		UserData user = HttpSessionUtils.getUserFromSession(session);
+		User user = HttpSessionUtils.getUserFromSession(session);
 		if (user.getId() != id) {	// 로그인한 유저가 생성한 질문만 삭제 가능
 			log.debug("작성자 이외에는 질문을 삭제 할 수 없습니다.");
 			return "redirect:/qna/list";

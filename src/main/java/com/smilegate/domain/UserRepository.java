@@ -2,6 +2,6 @@ package com.smilegate.domain;
 
 import org.springframework.data.repository.CrudRepository;
 
-public interface UserRepository extends CrudRepository<UserData, Long> {
-	UserData findByUserId(String userId);
+public interface UserRepository extends CrudRepository<User, Long> {
+	User findByUserId(String userId);
 }

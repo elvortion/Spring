@@ -2,7 +2,7 @@ package com.smilegate.utils;
 
 import javax.servlet.http.HttpSession;
 
-import com.smilegate.domain.UserData;
+import com.smilegate.domain.User;
 
 public class HttpSessionUtils {	
 	// 로그인 한 유저가 없는 경우
@@ -11,10 +11,10 @@ public class HttpSessionUtils {
 	}
 	
 	// 로그인 한 유저가 있는 경우, 유저를 반환
-	public static UserData getUserFromSession(HttpSession session) {
+	public static User getUserFromSession(HttpSession session) {
 		if (!isLoginUser(session)) {
 			return null;
 		}
-		return (UserData)session.getAttribute("loginUser");
+		return (User)session.getAttribute("loginUser");
 	}
 }

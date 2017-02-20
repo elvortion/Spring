@@ -6,11 +6,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-public class UserData {
+public class User {
 	@Id @GeneratedValue	// GeneratedVaue = Auto Increment
 	private long id; // 변경할 수 없는 고유 값. Primary Key	
-	
-	
 
 	@Column(length = 15, nullable = false, unique = true)
 	private String userId;
@@ -24,11 +22,11 @@ public class UserData {
 	@Column(length = 50, nullable = false, unique = true)
 	private String email;
 	
-	public UserData() {
+	public User() {
 		
 	}
 
-	public UserData(String userId, String password, String name, String email) {
+	public User(String userId, String password, String name, String email) {
 		this.userId = userId;
 		this.password = password;
 		this.name = name;
@@ -47,7 +45,7 @@ public class UserData {
 		return this.id == id;
 	}
 	
-	public void update(UserData updatedUserData) {
+	public void update(User updatedUserData) {
 		if (isMatchPassword(updatedUserData.password)) {
 			this.name = updatedUserData.name;
 			this.email = updatedUserData.email;
@@ -56,7 +54,7 @@ public class UserData {
 		}	
 	}
 
-	public UserData getUserData() {
+	public User getUserData() {
 		return this;
 	}
 	
