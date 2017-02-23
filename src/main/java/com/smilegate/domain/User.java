@@ -4,22 +4,24 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "user")
 public class User {
 	@Id @GeneratedValue	// GeneratedVaue = Auto Increment
 	private long id; // 변경할 수 없는 고유 값. Primary Key	
 
-	@Column(length = 15, nullable = false, unique = true)
+	@Column(name = "userId", length = 15, nullable = false, unique = true)
 	private String userId;
 	
-	@Column(length = 15, nullable = false)
+	@Column(name = "password",length = 15, nullable = false)
 	private String password;
 	
-	@Column(length = 15, nullable = false)
+	@Column(name = "name",length = 15, nullable = false)
 	private String name;
 	
-	@Column(length = 50, nullable = false, unique = true)
+	@Column(name = "email",length = 50, nullable = false, unique = true)
 	private String email;
 	
 	public User() {
